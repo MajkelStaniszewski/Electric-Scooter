@@ -59,7 +59,6 @@ void handleNewMessages(int newMessage)
 {
   Serial.print("Otrzymana nowa wiadomość z komunikatora Telegram:  ");
   Serial.println(newMessage);
-
   for (int i = 0; i < newMessage; i++)
   {
     String chat_id = bot.messages[i].chat_id;
@@ -110,7 +109,6 @@ void handleNewMessages(int newMessage)
       INFOMESSSAGE += "/Stop : Zatrzymanie działania nawigacji\n";
       bot.sendMessage(chat_id, INFOMESSSAGE);
     }
-
 if (text == "/Rower") travelMode = "bicycling";  
       
 if (text == "/Auto")  travelMode = "driving";  
