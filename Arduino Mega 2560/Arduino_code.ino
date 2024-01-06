@@ -4,7 +4,7 @@
 #include <Adafruit_ADXL345_U.h>
 Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified();
 
-// zasilanie
+// Zasilanie
 #define backlightUp 38
 #define backlightDown 39
 #define frontlightUp 40
@@ -39,7 +39,7 @@ int pressureAnalogPin = A1; //pin where our pressure pad is located.
 float pressureReading; //variable for storing our reading
 float pressure_max = 60;
 
-//Kierunkowskaz przedni + światła nocne
+//Kierunkowskaz przedni + Światła nocne
 bool bool_miganie = true;
 bool bool_skrecanie = false;
 #define PRZEDNIE_SWIATLO   23
@@ -52,21 +52,18 @@ const int switch_lewy_pin = 30;
 int lewy_state = 0;
 const int switch_prawy_pin = 31;
 int prawy_state = 0;
-
+//
 #define PIN_buzzer  32
 bool lightsOn=false;
 //hc06
 char Incoming_value = 'X';
 SoftwareSerial mySerial(53,52); // RX, TX   
-//
-
 //MQ135 - gas sensor
 #include <MQ2.h>
 int Analog_Input = A0;
 int smoke;
 MQ2 mq2(Analog_Input);
 //int lpg, co,value;
-//
 void setup_power(){
   pinMode(servoUp,OUTPUT);
   pinMode(servoDown,OUTPUT);
@@ -85,7 +82,6 @@ void setup_power(){
   pinMode(backlightDown,OUTPUT);
   pinMode(GPSUp,OUTPUT);
   pinMode(GPSDown,OUTPUT);
-
   digitalWrite(servoUp,HIGH);
   digitalWrite(servoDown,LOW);
   digitalWrite(buzzerUp,HIGH);
@@ -107,26 +103,20 @@ void setup_power(){
 void setup_MQ135(){
   mq2.begin();
 }
-
 void setup_switche(){
  pinMode(switch_lewy_pin, INPUT);
  digitalWrite(switch_lewy_pin,HIGH);
-
  pinMode(switch_prawy_pin, INPUT);
  digitalWrite(switch_prawy_pin,HIGH);
-
 }
-
 void setup_czujnik_nacisku(){
  #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
   clock_prescale_set(clock_div_1);
  #endif
   swiatlo_tylne.begin();
- 
 }
 void setup_buzzer(){
   pinMode(PIN_buzzer,OUTPUT);
-
 }
 void setup_swiatlo_nocne(){
   swiatlo_przednie.begin();  
@@ -137,7 +127,6 @@ void setup_servo(){
 void setup_hc06(){
   mySerial.begin(9600);
 }
-
 void setup_akcel(){
  if(!accel.begin())
    {
@@ -147,7 +136,6 @@ void setup_akcel(){
    else
    Serial.println("ADXL345 sensor detected.");    
 }
-
 int hc06_loop() {
   if(mySerial.available()> 0 )  
   {
@@ -158,8 +146,7 @@ int hc06_loop() {
    if(Incoming_value == '1')             
       digitalWrite(13, HIGH);  
     else if(Incoming_value == '0')       
-      digitalWrite(13, LOW);  */
-       
+      digitalWrite(13, LOW);  */    
   }      
 }
 void buzzerPlay_loop(){
@@ -171,7 +158,6 @@ void buzzerPlay_loop(){
 void buzzerStop_loop(){
   digitalWrite(PIN_buzzer, LOW);
 }
-
 void upadek_loop(){
     sensors_event_t event; 
    accel.getEvent(&event);
@@ -182,20 +168,16 @@ void upadek_loop(){
   */
    float y = event.acceleration.y;
 if(lightsOn==false){   
-
-
    if (!( (y > 7 && y <12) || (y < -7 && y > -12) )){
    delay(DELAYVAL);
    Serial.println("9");
    }
-
    if (( (y > 7 && y <12) || (y < -7 && y > -12) )){
    delay(DELAYVAL);
    Serial.println("10");
    }
 }  
 }
-
 void czujnik_nacisku_loop(){
   pressureReading = analogRead(pressureAnalogPin);
    swiatlo_tylne.clear();
@@ -204,19 +186,15 @@ void czujnik_nacisku_loop(){
 
 float pressure_light = (pressureReading/pressure_max)*255;
       for(int i=0; i<NUMPIXELS; i++) {
-
     swiatlo_tylne.setPixelColor(i, swiatlo_tylne.Color(pressure_light, 0, 0));
     swiatlo_tylne.show();
 }
 }
-
 void MQ135_loop(){
-
    float* values= mq2.read(false); //set it false if you don't want to print the values in the Serial
    smoke = mq2.readSmoke();
    //Serial.println("SMOKE:");
    Serial.println(smoke);
-
    if (smoke > 6900){
       buzzerPlay_loop();
       bool_miganie = true;
@@ -234,7 +212,6 @@ void blokada(){
     delay(DELAYVAL);
     
 }
-
 void wlacz_swiatla_stopu(){
   swiatlo_tylne.clear();
        for(int i=0; i<NUMPIXELS; i++) {
@@ -243,7 +220,6 @@ void wlacz_swiatla_stopu(){
     swiatlo_tylne.show();
 }
 }
-
 void wylacz_swiatla_stopu(){
   swiatlo_tylne.clear();
         for(int i=0; i<NUMPIXELS; i++) {
@@ -251,149 +227,97 @@ void wylacz_swiatla_stopu(){
     swiatlo_tylne.show();
 }   
 }
-
 void wlacz_swiatla_awaryjne(){
   swiatlo_tylne.clear();
-  swiatlo_przednie.clear();
-  
+  swiatlo_przednie.clear(); 
     for(int i=0; i<NUMPIXELS; i++) {
-
     swiatlo_tylne.setPixelColor(i, swiatlo_tylne.Color(255, 255, 0));
     swiatlo_tylne.show();
-    
   }
-
     for(int i=NUMPIXELS;i>=0;i--){
-
     swiatlo_przednie.setPixelColor(i, swiatlo_przednie.Color(255, 255, 0));
-    swiatlo_przednie.show();
-   
-  }
-  
+    swiatlo_przednie.show(); 
+  }  
 }
-void wlacz_swiatla_przednie(){
-  
-  swiatlo_przednie.clear();
-  
-
+void wlacz_swiatla_przednie(){  
+    swiatlo_przednie.clear();
     for(int i=NUMPIXELS;i>=0;i--){
-
     swiatlo_przednie.setPixelColor(i, swiatlo_przednie.Color(255, 255, 255));
     swiatlo_przednie.show();
-   
-  }
-  
+  }  
 }
-void wylacz_swiatla_przednie(){
-  
-  swiatlo_przednie.clear();
-  
-
+void wylacz_swiatla_przednie(){  
+    swiatlo_przednie.clear();
     for(int i=NUMPIXELS;i>=0;i--){
-
     swiatlo_przednie.setPixelColor(i, swiatlo_przednie.Color(0, 0, 0));
-    swiatlo_przednie.show();
-   
-  }
-  
+    swiatlo_przednie.show();  
+  }  
 }
-
 void wylacz_swiatla_awaryjne(){
   swiatlo_tylne.clear();
-  swiatlo_przednie.clear();
-  
+  swiatlo_przednie.clear(); 
     for(int i=0; i<NUMPIXELS; i++) {
-
     swiatlo_tylne.setPixelColor(i, swiatlo_tylne.Color(0, 0, 0));
     swiatlo_tylne.show();
   }
-
     for(int i=NUMPIXELS;i>=0;i--){
-
     swiatlo_przednie.setPixelColor(i, swiatlo_przednie.Color(0, 0, 0));
     swiatlo_przednie.show();
   }
 }
-
-
 void switche_loop(){
   lewy_state = digitalRead(switch_lewy_pin);
    //  Serial.println(lewy_state);  
-
   prawy_state = digitalRead(switch_prawy_pin);
    //  Serial.println(switch_prawy_pin);  
 }
-
 void kierunkowskaz(){
   switche_loop();
-  
    if(blinking==true){
-
    if (prawy_state == ACTIVATED){
     bool_skrecanie = true;
-   for(int i=((NUMPIXELS/2)-1); i>=0; i--) {
+    for(int i=((NUMPIXELS/2)-1); i>=0; i--) {
     swiatlo_przednie.setPixelColor(i, swiatlo_przednie.Color(255, 255, 0));
     swiatlo_przednie.show();
-
-   swiatlo_tylne.setPixelColor(i, swiatlo_tylne.Color(255, 255, 0));
-    swiatlo_tylne.show();
-    
+    swiatlo_tylne.setPixelColor(i, swiatlo_tylne.Color(255, 255, 0));
+    swiatlo_tylne.show(); 
     delay(0.6*DELAYVAL);
    }
    blinking = false;
-
    }
-
    else if (lewy_state == ACTIVATED){
    bool_skrecanie = true;
     for(int i=NUMPIXELS/2;i<=NUMPIXELS;i++){
     swiatlo_tylne.setPixelColor(i, swiatlo_tylne.Color(255, 255, 0));
     swiatlo_tylne.show();
-
     swiatlo_przednie.setPixelColor(i, swiatlo_przednie.Color(255, 255, 0));
     swiatlo_przednie.show();
-
     delay(0.6*DELAYVAL);
    }
    blinking = false;
-
    }
-
-
    else{
   bool_skrecanie = false;  
-   for(int i=0; i<NUMPIXELS; i++) {
-
+    for(int i=0; i<NUMPIXELS; i++) {
     swiatlo_tylne.setPixelColor(i, swiatlo_tylne.Color(0,0,0));
-    swiatlo_tylne.show();
-    
+    swiatlo_tylne.show(); 
     swiatlo_przednie.setPixelColor(i, swiatlo_przednie.Color(0,0,0));
     swiatlo_przednie.show();
-
    }
-
    }
-
    }
    else{
    for(int i=0; i<NUMPIXELS; i++) {
     bool_skrecanie = true;
     swiatlo_tylne.setPixelColor(i, swiatlo_tylne.Color(0,0,0));
-    swiatlo_tylne.show();
-    
+    swiatlo_tylne.show();  
     swiatlo_przednie.setPixelColor(i, swiatlo_przednie.Color(0,0,0));
     swiatlo_przednie.show();
-
    }
    delay(0.1*DELAYVAL);
-   blinking = true;
-  
+   blinking = true;  
    }
 }
-
-   
-
-
 void setup() 
 {
    Serial.begin(9600);
@@ -407,9 +331,7 @@ void setup()
    setup_buzzer();
    setup_MQ135();
   
-  
 }
-
 void loop(){ 
    hc06_loop();
    czujnik_nacisku_loop();
@@ -422,8 +344,6 @@ void loop(){
    upadek_loop();
    kierunkowskaz();
    MQ135_loop();
-
-
 // Wysunięcie popychacza
 if(Incoming_value == '0'){
 blokada();
@@ -445,8 +365,7 @@ if(Incoming_value == '1'){
       }   
 }
 // Wylacz blokade
-if(Incoming_value == '2'){
-       
+if(Incoming_value == '2'){       
 }
 // Wylacz alarm
 if(Incoming_value == '3'){
@@ -468,12 +387,10 @@ if(Incoming_value == 'b'){
 }
 // Włącz światła stopu
 if(Incoming_value == 'c'){
-  wlacz_swiatla_stopu();
-    
+  wlacz_swiatla_stopu(); 
 }
 //Wyłącz światłą stopu
 if(Incoming_value == 'd'){
-
 wylacz_swiatla_stopu();      
 }
 // Włącz światła AWARYJNE
@@ -491,8 +408,6 @@ if(Incoming_value == 'f'){
 bool_miganie = false;  
 wylacz_swiatla_awaryjne();    
 }
-
-
 // Włącz światła nocne
 if(Incoming_value == '*'){
        night=true;
@@ -513,8 +428,6 @@ if(Incoming_value == '#'){
 if(!(night==true && nightlightApproved==true)){
   wylacz_swiatla_przednie();
 }
-
-
 }
   //delay(0.6*DELAYVAL);
 }
