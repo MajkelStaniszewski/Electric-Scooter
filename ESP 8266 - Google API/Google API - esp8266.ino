@@ -1,4 +1,3 @@
-
 #include <ESP8266WiFi.h>
 #include <GoogleMapsApi.h>
 #include <WiFiClientSecure.h>
@@ -15,7 +14,6 @@ WiFiClientSecure client;
 GoogleMapsApi api(API_KEY, client);
 UniversalTelegramBot bot(ARDUINO_MAPS_BOT_TOKEN, client);
 WifiLocation location(API_KEY);
-
 
 // Wartości domyślne dla zmiennych zdefiniowanych w biblotece "GoogleMapsApi"
 int api_mtbs = 60000; // czas pomiędzy żądaniami API
@@ -57,8 +55,6 @@ void setup() {
   Serial.println(ip);
   //get_current_GEOLOCATION(); - Wywołanie pobrania aktualnej lokalizacji z żądania GEOLocation API
 }
-
-
 void handleNewMessages(int newMessage)
 {
   Serial.print("Otrzymana nowa wiadomość z komunikatora Telegram:  ");
@@ -68,8 +64,6 @@ void handleNewMessages(int newMessage)
   {
     String chat_id = bot.messages[i].chat_id;
     String text = bot.messages[i].text;
-
-
      if (text.startsWith("/Koniec")) {
         Serial.println(text);
         text.remove(0, 8);
@@ -103,7 +97,6 @@ void handleNewMessages(int newMessage)
         flag1 = 0, flag2= 0;
         bot.sendMessage(chat_id, "Zatrzymanie działania nawigacji");
       }
-
     if (text == "/Info")
     {
       String INFOMESSSAGE = "Nawigacja GoogleMapsAPI - ESP8266\n\n";
@@ -118,7 +111,6 @@ void handleNewMessages(int newMessage)
       bot.sendMessage(chat_id, INFOMESSSAGE);
     }
 
-
 if (text == "/Rower") travelMode = "bicycling";  
       
 if (text == "/Auto")  travelMode = "driving";  
@@ -127,7 +119,6 @@ if (text == "/Pieszo") travelMode = "walking";
 
 if (text == "/Komunikacja") travelMode = "transit";  
       
-
 if(flag3 == true) {
   get_current_GEOLOCATION();
   flag3 = 0;
@@ -138,13 +129,11 @@ if(flag1 == true && flag2 == true){
  } 
 }
 }
-
 void get_current_GEOLOCATION(){
  setClock(); // Pobranie aktualne czasu rzeczywistego
  location_t loc = location.getGeoFromWiFi(); // Uzyskanie współrzednych geograficznych
  current_location = String(loc.lat, 7) + ","+String(loc.lon, 7); // zapis uzyskanych danych
  }
-
 void setClock () {
     configTime (0, 0, "pool.ntp.org", "time.nist.gov");
    // Serial.print ("Waiting for NTP time sync: ");
@@ -167,7 +156,6 @@ bool checkGoogleMaps() {
     DynamicJsonDocument jsonBuffer(1024);
     DeserializationError response = deserializeJson(jsonBuffer, responseString);
     JsonObject root = jsonBuffer.as<JsonObject>();
-
     if (!response) 
     {
        String status = root["status"];
@@ -188,9 +176,7 @@ bool checkGoogleMaps() {
         }
     }
 }
-
 void loop() {
-  
     int newMessage = bot.getUpdates(bot.last_message_received + 1);
     while (newMessage)
     {
@@ -198,5 +184,4 @@ void loop() {
       handleNewMessages(newMessage);
       newMessage = bot.getUpdates(bot.last_message_received + 1);
     }
-
 }
