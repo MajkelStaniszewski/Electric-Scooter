@@ -58,19 +58,14 @@ void printLocalTime()
    char timeMonth[9];
    strftime(timeMonth,9, "%B", &timeinfo);
    //Serial.println(timeMonth);
-
 }
-
 void sendMessage(String message){
-
   // Dane do wysłaniia żądania HTTP API
   String url = "https://api.callmebot.com/whatsapp.php?phone=" + phoneNumber + "&apikey=" + apiKey + "&text=" + urlEncode(message);    
   HTTPClient http;
   http.begin(url);
-
   // Określenie zawartości nagłówka 
- // http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  
+  // http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   // Wysłanie żądania HTPP
   int httpResponseCode = http.POST(url);
   if (httpResponseCode == 200){
@@ -81,11 +76,9 @@ void sendMessage(String message){
     Serial.print("HTTP - odpowiedź: ");
     Serial.println(httpResponseCode);
   }
-
   // Zwolnienie zasobów
   http.end();
 }
-
 void setup() {
    Serial.begin(115200);
    Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2); 
@@ -99,7 +92,6 @@ void setup() {
    Serial.println("");
    Serial.print("Połączono z siecią Wi-Fi o adresie IP: ");
    Serial.println(WiFi.localIP());
-
    //Inicjacja oraz uzyskanie czasu
    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
    printLocalTime();
@@ -108,16 +100,11 @@ void setup() {
    setup_WebServer();   
    // Inicjacja modułu GPS
    gps_setup();
-   
 }
-
-
 void loop_sending_warning_message(){
-
     Serial.println(Serial2.readString());
-   String dane = (Serial2.readString()); // Odczyt przesłanych danych z Arduino
-     int myInt = dane.toInt(); 
-
+    String dane = (Serial2.readString()); // Odczyt przesłanych danych z Arduino
+    int myInt = dane.toInt(); 
    if (myInt == 9){ // Nieprawidłowe ustawienie hulajnogi 
    count++;
    //Serial.print("Count: "); Serial.println(count);
@@ -130,12 +117,10 @@ void loop_sending_warning_message(){
    sendMessage("Wypadek, potrzebuje pomocy!!" + wiadomosc);
    count = 0;
    }
-   
    if(myInt == 4) { // Poinformowanie o fałszywym alarmie 
    sendMessage("Fałszywy Alarm, wszystko w porządku!!" );
    }
 }
-
 void displayInfo()
 {
    /* 
@@ -146,13 +131,11 @@ void displayInfo()
     Serial.print(gps.location.lat(), 6);
     Serial.print(F(","));
     Serial.print(gps.location.lng(), 6);
-    
    }
    else
    {
     Serial.print(F("INVALID"));
    }
-
    Serial.print(F("  Date/Time: "));
    if (gps.date.isValid())
    {
@@ -162,13 +145,11 @@ void displayInfo()
     Serial.print(gps.date.day());
     Serial.print(F("/"));
     Serial.print(gps.date.year());
-    
    }
    else
    {
     Serial.print(F("INVALID"));
    } */
-
 Serial.print(F(" "));
 if (gps.time.isValid())
 {
@@ -176,8 +157,7 @@ LATITUDE = gps.location.lat(), 6 ; // Uzyskanie z modułu GPS szerokości geogra
 latitude = double_string_con(LATITUDE); 
 LONGITUDE = gps.location.lng(), 6 ;
 longitude = double_string_con(LONGITUDE);
-SPEED = gps.speed.kmph();
-                
+SPEED = gps.speed.kmph();          
   /* Druk aktualnego czasu
     if (gps.time.hour() < 10) Serial.print(F("0"));
     Serial.print(gps.time.hour());
@@ -191,15 +171,9 @@ SPEED = gps.speed.kmph();
     if (gps.time.centisecond() < 10) Serial.print(F("0"));
     Serial.print(gps.time.centisecond()); */
    }
-     // druk do czasu
-     //Serial.println();
-     //Serial.println();
-
 GPSinfoToMessage();
 }
-
 void GPSinfoToMessage(){
- 
    wiadomosc = "Współrzedne geograficzne hulajnogi: ";
    wiadomosc = wiadomosc + "\n";
            
@@ -224,12 +198,10 @@ void GPSinfoToMessage(){
      
   delay(2000); // Opóżnienie 2 sekundy
 }
-
 void gps_setup(){
  Serial.begin(115200);
  ss.begin(9600, SERIAL_8N1, RXD0, TXD0); 
 }
-
 void gps_loop(){
   while (ss.available() > 0) // Warunek sprawdzający czy otrzymano sygnał z satelity
     if (gps.encode(ss.read()))
@@ -241,7 +213,6 @@ void gps_loop(){
     while(true);
   } 
 }
-
 void loop() {
   //gps_loop();
   loop_sending_warning_message();
@@ -250,8 +221,6 @@ void loop() {
   loop_aht();
   delay(200);
  }
-
-
 String double_string_con(double input)
 {
   String storag1 = "";
@@ -259,10 +228,8 @@ String double_string_con(double input)
   String storag2="";
   char dot='.';
   String val_string="";
-
   storag2=(String)input;
   storag1= (String)(input*1000000);
-
   for(int i=0; i<6; i++)
     {
      if(storag2.charAt(i)==dot) break;
@@ -282,9 +249,7 @@ String double_string_con(double input)
             val_string = val_string + dot ;
            }
            val_string = val_string + storag1.charAt(i);
-    
-    }
-   
+    } 
    count=0;
    count2=0;
    return val_string;
@@ -294,26 +259,21 @@ void handleRoot() {
  String s = MAIN_page; //Read HTML contents
  server.send(200, "text/html", s); //Send web page
 }
- 
 void handleADC() {
  //bool wypadek = true;
  if (wypadek == false)
  server.send(200, "text/plane","\n  Odczyty sensorów: " "\n  Temperatura: " + adcValue +" °C "+ " \n wilgotność: "+ adcValue2 +" %"); //Send ADC value only to client ajax request
  if (wypadek == true)
   server.send(200, "text/plane","!!! WYPADEK !!!"); //Send ADC value only to client ajax request
-
 }
-
 void setup_aht() {
    // Serial.println("Adafruit AHT10/AHT20 demo!");
-
    if (! aht.begin()) {
     Serial.println("Could not find AHT? Check wiring");
     while (1) delay(10);
    }
     Serial.println("AHT10 or AHT20 found");
 }
-
 void setup_WebServer() {
    server.on("/", handleRoot);      //This is display page
    server.on("/readADC", handleADC);//To get update of ADC Value only
@@ -321,7 +281,6 @@ void setup_WebServer() {
    server.begin();                  //Start server
    //Serial.println("HTTP server started");
 }
-
 void loop_aht() {
    sensors_event_t humidity, temp;
    aht.getEvent(&humidity, &temp);// populate temp and humidity objects with fresh data
@@ -331,5 +290,4 @@ void loop_aht() {
    adcValue2 = String(humidity.relative_humidity);
    //delay(500);
 }
-
 //AHT 20 oraz WebServer
