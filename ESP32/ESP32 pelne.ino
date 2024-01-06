@@ -25,8 +25,8 @@ const int   daylightOffset_sec = 3600;
 const char* ssid = "XXXXX";
 const char* password = "XXXXX";
 
-String phoneNumber = "+48722372088";
-String apiKey = "8513556";
+String phoneNumber = "XXXXXXX";
+String apiKey = "XXXXXX";
 
 // Zmienna pomocniczna zliczająca ilość otrzymanych sygnałów z akceleometru 
 int count =0;
